@@ -1,174 +1,66 @@
-*{
+<!DOCTYPE html>
+<html lang="fa">
 
-    box-sizing:border-box;
+<head>
 
-}
+<meta charset="UTF-8">
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-body{
+<title>Tap Empire</title>
 
-    margin:0;
+<link rel="stylesheet" href="style.css">
 
-    min-height:100vh;
+</head>
 
-    display:flex;
 
-    justify-content:center;
+<body>
 
-    align-items:center;
 
-    background:linear-gradient(
-        135deg,
-        #111,
-        #333
-    );
+<h1>👑 Tap Empire</h1>
 
-    color:white;
 
-    font-family:Arial, sans-serif;
+<div id="gameBox">
 
-    text-align:center;
 
-}
+<h2 id="coins">
+🪙 سکه: 0
+</h2>
+<div id="particles"></div>
 
+<button id="coinButton" onclick="tapCoin()">
 
+🪙
 
-h1{
+</button>
 
-    font-size:42px;
 
-    color:#ffd700;
+<h3 id="best">
+🏆 رکورد: 0
+</h3>
 
-}
 
+<button onclick="support()">
 
+❤️ حمایت از بازی
 
-#gameBox{
+</button>
 
-    background:#222;
+<button onclick="restartGame()">
+🔄 شروع دوباره
+</button>
 
-    padding:30px;
+<button onclick="openRubika()">
+📢 کانال روبیکا
+</button>
 
-    border-radius:25px;
+</div>
 
-    box-shadow:0 0 20px #000;
 
-}
 
+<script src="game.js"></script>
 
 
-#coins{
+</body>
 
-    font-size:30px;
-
-}
-
-
-
-#coinButton{
-
-    width:180px;
-
-    height:180px;
-
-    border-radius:50%;
-
-    border:none;
-
-    background:#ffd700;
-
-    font-size:80px;
-
-    cursor:pointer;
-
-    box-shadow:0 10px 0 #b88600;
-transition: transform 0.1s ease;
-user-select: none;
-}
-
-
-
-#coinButton:active{
-
-    transform:translateY(10px);
-
-    box-shadow:0 0 0 #b88600;
-
-}
-
-
-
-button{
-
-    margin:15px;
-
-    padding:12px 25px;
-
-    border:none;
-
-    border-radius:15px;
-
-    background:#00c853;
-
-    color:white;
-
-    font-size:18px;
-
-    cursor:pointer;
-
-}
-
-
-button:hover{
-
-    transform:scale(1.05);
-
-}
-#particles{
-
-    position:relative;
-
-    width:0;
-    height:0;
-
-}
-
-.particle{
-
-    position:absolute;
-
-    width:8px;
-
-    height:8px;
-
-    border-radius:50%;
-
-    background:gold;
-
-    pointer-events:none;
-
-    animation:explode .7s linear forwards;
-
-}
-
-@keyframes explode{
-
-    0%{
-
-        opacity:1;
-
-        transform:translate(0,0) scale(1);
-
-    }
-
-    100%{
-
-        opacity:0;
-
-        transform:
-        translate(var(--x),var(--y))
-        scale(0);
-
-    }
-
-}
+</html>
