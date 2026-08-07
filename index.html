@@ -1,62 +1,174 @@
-<!DOCTYPE html>
-<html lang="fa">
+*{
 
-<head>
+    box-sizing:border-box;
 
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Tap Empire</title>
-
-<link rel="stylesheet" href="style.css">
-
-</head>
+}
 
 
-<body>
+body{
 
+    margin:0;
 
-<h1>👑 Tap Empire</h1>
+    min-height:100vh;
 
+    display:flex;
 
-<div id="gameBox">
+    justify-content:center;
 
+    align-items:center;
 
-<h2 id="coins">
-🪙 سکه: 0
-</h2>
-<div id="particles"></div>
+    background:linear-gradient(
+        135deg,
+        #111,
+        #333
+    );
 
-<button id="coinButton" onclick="tapCoin()">
+    color:white;
 
-🪙
+    font-family:Arial, sans-serif;
 
-</button>
+    text-align:center;
 
-
-<h3 id="best">
-🏆 رکورد: 0
-</h3>
-
-
-<button onclick="support()">
-
-❤️ حمایت از بازی
-
-</button>
-
-<button onclick="restartGame()">
-🔄 شروع دوباره
-</button>
-
-</div>
+}
 
 
 
-<script src="game.js"></script>
+h1{
+
+    font-size:42px;
+
+    color:#ffd700;
+
+}
 
 
-</body>
 
-</html>
+#gameBox{
+
+    background:#222;
+
+    padding:30px;
+
+    border-radius:25px;
+
+    box-shadow:0 0 20px #000;
+
+}
+
+
+
+#coins{
+
+    font-size:30px;
+
+}
+
+
+
+#coinButton{
+
+    width:180px;
+
+    height:180px;
+
+    border-radius:50%;
+
+    border:none;
+
+    background:#ffd700;
+
+    font-size:80px;
+
+    cursor:pointer;
+
+    box-shadow:0 10px 0 #b88600;
+transition: transform 0.1s ease;
+user-select: none;
+}
+
+
+
+#coinButton:active{
+
+    transform:translateY(10px);
+
+    box-shadow:0 0 0 #b88600;
+
+}
+
+
+
+button{
+
+    margin:15px;
+
+    padding:12px 25px;
+
+    border:none;
+
+    border-radius:15px;
+
+    background:#00c853;
+
+    color:white;
+
+    font-size:18px;
+
+    cursor:pointer;
+
+}
+
+
+button:hover{
+
+    transform:scale(1.05);
+
+}
+#particles{
+
+    position:relative;
+
+    width:0;
+    height:0;
+
+}
+
+.particle{
+
+    position:absolute;
+
+    width:8px;
+
+    height:8px;
+
+    border-radius:50%;
+
+    background:gold;
+
+    pointer-events:none;
+
+    animation:explode .7s linear forwards;
+
+}
+
+@keyframes explode{
+
+    0%{
+
+        opacity:1;
+
+        transform:translate(0,0) scale(1);
+
+    }
+
+    100%{
+
+        opacity:0;
+
+        transform:
+        translate(var(--x),var(--y))
+        scale(0);
+
+    }
+
+}
