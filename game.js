@@ -1,1373 +1,1885 @@
-"use strict";
-
 const SAVE_KEY = "tapEmpire_final_save";
 
-
 const defaultGame = {
+  coins: 0,
+  gems: 0,
+  best: 0,
+  power: 1,
+  auto: 0,
+  clicks: 0,
+  totalEarned: 0,
 
-    coins:0,
+  combo: 0,
+  comboTime: 0,
+  bestCombo: 0,
 
-    best:0,
+  critChance: 5,
+  critCount: 0,
 
-    power:1,
+  gemPower: 0,
 
-    auto:0,
+  level: 1,
+  xp: 0,
 
-    clicks:0,
+  daily: "",
+  streak: 0,
+  lastDaily: "",
 
-    totalEarned:0,
+  boostUntil: 0,
 
+  skins: ["classic"],
+  selectedSkin: "classic",
 
-    combo:0,
+  sound: true,
 
-    comboTime:0,
+  lastSeen: Date.now(),
 
-
-    level:1,
-
-    xp:0,
-
-
-    daily:"",
-
-
-    claimedMissions:[],
-
-
-    skins:["classic"],
-
-    selectedSkin:"classic"
-
+  claimedMissions: [],
+  claimedAchievements: []
 };
-
 
 
 let game = loadGame();
 
+let audioCtx = null;
+
+const comboMax = 3000;
+
+
+const skins = [
+
+  {
+    id: "classic",
+    name: "کلاسیک",
+    icon: "🪙",
+    price: 0
+  },
+
+  {
+    id: "gold",
+    name: "طلایی",
+    icon: "🥇",
+    price: 1000
+  },
+
+  {
+    id: "diamond",
+    name: "الماس",
+    icon: "💎",
+    price: 5000
+  },
+
+  {
+    id: "fire",
+    name: "آتش",
+    icon: "🔥",
+    price: 10000
+  },
+
+  {
+    id: "crown",
+    name: "سلطنتی",
+    icon: "👑",
+    price: 25000
+  }
+
+];
+
+
+const missions = [
+
+  {
+    id: "click100",
+    title: "👆 صد کلیک",
+    text: "100 بار کلیک کن",
+    target: 100,
+    reward: 200,
+    type: "click"
+  },
+
+  {
+    id: "earn1000",
+    title: "🪙 خزانه کوچک",
+    text: "1000 سکه درآمد داشته باش",
+    target: 1000,
+    reward: 500,
+    type: "earn"
+  },
+
+  {
+    id: "level5",
+    title: "👑 سطح 5",
+    text: "به سطح 5 برس",
+    target: 5,
+    reward: 1000,
+    type: "level"
+  },
+
+  {
+    id: "combo25",
+    title: "🔥 کمبو 25",
+    text: "به کمبو 25 برس",
+    target: 25,
+    reward: 750,
+    type: "combo"
+  },
+
+  {
+    id: "crit10",
+    title: "💥 شکارچی کریتیکال",
+    text: "10 کریتیکال بزن",
+    target: 10,
+    reward: 1000,
+    type: "crit"
+  }
+
+];
+
+
+const achievements = [
+
+  {
+    id: "rich",
+    title: "💰 سرمایه‌دار",
+    text: "10000 سکه جمع کن",
+    target: 10000,
+    type: "earn",
+    reward: 2
+  },
+
+  {
+    id: "tapmaster",
+    title: "👆 استاد کلیک",
+    text: "1000 کلیک",
+    target: 1000,
+    type: "click",
+    reward: 3
+  },
+
+  {
+    id: "combo",
+    title: "🔥 کمبو افسانه‌ای",
+    text: "کمبو 50",
+    target: 50,
+    type: "combo",
+    reward: 5
+  },
+
+  {
+    id: "king",
+    title: "👑 پادشاه",
+    text: "سطح 10",
+    target: 10,
+    type: "level",
+    reward: 10
+  },
+
+  {
+    id: "critical",
+    title: "💥 ماشین کریتیکال",
+    text: "100 کریتیکال",
+    target: 100,
+    type: "crit",
+    reward: 10
+  }
+
+];
 
 
 function loadGame(){
 
-    let saved =
-    localStorage.getItem(SAVE_KEY);
+  try{
 
+    const saved =
+      localStorage.getItem(SAVE_KEY);
 
     if(saved){
 
-        return {
-            ...defaultGame,
-            ...JSON.parse(saved)
-        };
+      return {
+        ...defaultGame,
+        ...JSON.parse(saved)
+      };
 
     }
 
+  }catch(e){}
 
-    return {
-        ...defaultGame
-    };
+  return {
+    ...defaultGame
+  };
 
 }
-
-
-
 
 
 function saveGame(){
 
-    localStorage.setItem(
+  game.lastSeen = Date.now();
 
-        SAVE_KEY,
-
-        JSON.stringify(game)
-
-    );
+  localStorage.setItem(
+    SAVE_KEY,
+    JSON.stringify(game)
+  );
 
 }
-
-
-
 
 
 function toast(text){
 
-    let box =
-    document.getElementById("toastBox");
-
-
-    let div =
+  const d =
     document.createElement("div");
 
+  d.className = "toast";
 
-    div.className="toast";
+  d.textContent = text;
 
-    div.textContent=text;
+  document
+    .getElementById("toastBox")
+    .appendChild(d);
 
-
-    box.appendChild(div);
-
-
-
-    setTimeout(()=>{
-
-        div.remove();
-
-    },2500);
-
+  setTimeout(
+    () => d.remove(),
+    2400
+  );
 
 }
-
-
-
-
-
-
-function powerCost(){
-
-    return game.power * 100;
-
-}
-
-
-
-function autoCost(){
-
-    return (game.auto+1)*250;
-
-}
-
-
-
 
 
 function xpNeed(){
 
-    return game.level*100;
+  return 100 +
+    Math.floor(
+      (game.level - 1) * 45
+    );
 
 }
-
-
-
 
 
 function addXP(value){
 
-    game.xp += value;
+  game.xp += value;
 
+  while(
+    game.xp >= xpNeed()
+  ){
 
-    while(game.xp >= xpNeed()){
+    game.xp -= xpNeed();
 
+    game.level++;
 
-        game.xp -= xpNeed();
+    const reward =
+      25 + game.level * 25;
 
+    game.coins += reward;
 
-        game.level++;
+    if(game.level % 5 === 0){
 
-
-        toast(
-            "👑 سطح جدید: "+game.level
-        );
-
+      game.gems += 1;
 
     }
 
+    toast(
+      `👑 سطح ${game.level}! +${reward} 🪙`
+    );
+
+    sound(660,.12);
+
+  }
+
 }
-
-
-
 
 
 function comboMultiplier(){
 
+  if(game.combo >= 50)
+    return 3;
 
-    if(game.combo>=50)
-        return 3;
+  if(game.combo >= 25)
+    return 2;
 
+  if(game.combo >= 10)
+    return 1.5;
 
-    if(game.combo>=25)
-        return 2;
-
-
-    if(game.combo>=10)
-        return 1.5;
-
-
-    return 1;
+  return 1;
 
 }
 
 
+function powerCost(){
 
+  return Math.floor(
+    100 *
+    Math.pow(
+      1.45,
+      game.power - 1
+    )
+  );
+
+}
+
+
+function autoCost(){
+
+  return Math.floor(
+    250 *
+    Math.pow(
+      1.55,
+      game.auto
+    )
+  );
+
+}
+
+
+function critCost(){
+
+  return Math.floor(
+    500 *
+    Math.pow(
+      1.8,
+      Math.floor(
+        (game.critChance - 5) / 2
+      )
+    )
+  );
+
+}
+
+
+function gemPowerCost(){
+
+  return 5 +
+    game.gemPower * 5;
+
+}
+
+
+function clickReward(){
+
+  const mult =
+    comboMultiplier();
+
+  const boosted =
+    Date.now() < game.boostUntil
+      ? 2
+      : 1;
+
+  const crit =
+    Math.random() * 100 <
+    game.critChance;
+
+  let reward =
+    Math.max(
+      1,
+      Math.floor(
+        game.power *
+        (1 + game.gemPower * .25) *
+        mult *
+        boosted
+      )
+    );
+
+  if(crit){
+
+    reward *= 3;
+
+    game.critCount++;
+
+    toast(
+      `💥 کریتیکال! +${reward} 🪙`
+    );
+
+    sound(880,.1);
+
+  }
+
+  return {
+    reward,
+    crit
+  };
+
+}
 
 
 function updateCombo(){
 
+  game.combo++;
 
-    game.combo++;
+  game.comboTime =
+    comboMax;
 
+  if(
+    game.combo >
+    game.bestCombo
+  ){
 
-    if(game.combo>100)
+    game.bestCombo =
+      game.combo;
 
-        game.combo=100;
-
-
-
-}
-
-// ======================
-// کلیک سکه
-// ======================
-
-
-document
-.getElementById("coinButton")
-.onclick=function(){
-
-
-
-    updateCombo();
-
-
-
-    let reward = Math.floor(
-
-        game.power *
-
-        comboMultiplier()
-
-    );
-
-
-
-    game.coins += reward;
-
-
-    game.totalEarned += reward;
-
-
-    game.clicks++;
-
-
-
-    if(game.coins > game.best){
-
-        game.best = game.coins;
-
-    }
-
-
-
-    addXP(1);
-
-
-
-    createParticles();
-
-
-
-    saveGame();
-
-
-    update();
-
-
-
-};
-
-
-
-
-
-
-
-
-// ======================
-// ارتقای قدرت
-// ======================
-
-
-document
-.getElementById("powerUpgrade")
-.onclick=function(){
-
-
-    let cost = powerCost();
-
-
-
-    if(game.coins < cost){
-
-        toast(
-            "🪙 سکه کافی نیست"
-        );
-
-        return;
-
-    }
-
-
-
-    game.coins -= cost;
-
-
-    game.power++;
-
-
-    addXP(10);
-
-
-    toast(
-        "⚡ قدرت کلیک افزایش یافت"
-    );
-
-
-    saveGame();
-
-
-    update();
-
-
-
-};
-
-
-
-
-
-
-
-
-// ======================
-// ارتقای خودکار
-// ======================
-
-
-document
-.getElementById("autoUpgrade")
-.onclick=function(){
-
-
-    let cost = autoCost();
-
-
-
-    if(game.coins < cost){
-
-
-        toast(
-            "🪙 سکه کافی نیست"
-        );
-
-
-        return;
-
-    }
-
-
-
-
-    game.coins -= cost;
-
-
-    game.auto++;
-
-
-
-    addXP(15);
-
-
-
-    toast(
-        "🤖 درآمد خودکار فعال شد"
-    );
-
-
-
-    saveGame();
-
-
-    update();
-
-
-
-};
-
-
-
-
-
-
-
-// ======================
-// درآمد خودکار
-// ======================
-
-
-setInterval(function(){
-
-
-
-    if(game.auto>0){
-
-
-        game.coins += game.auto;
-
-
-        game.totalEarned += game.auto;
-
-
-
-        if(game.coins > game.best){
-
-            game.best=game.coins;
-
-        }
-
-
-
-        addXP(1);
-
-
-
-        saveGame();
-
-
-        update();
-
-
-
-    }
-
-
-
-},1000);
-
-
-
-
-
-
-
-// ======================
-// مأموریت ها
-// ======================
-
-
-const missions=[
-
-
-{
-
-id:"click100",
-
-title:"👆 صد کلیک",
-
-text:"100 بار روی سکه کلیک کن",
-
-target:100,
-
-reward:200,
-
-type:"click"
-
-
-},
-
-
-{
-
-id:"earn1000",
-
-title:"🪙 جمع کردن سکه",
-
-text:"1000 سکه به دست بیاور",
-
-target:1000,
-
-reward:500,
-
-type:"earn"
-
-
-},
-
-
-{
-
-id:"level5",
-
-title:"👑 سطح 5",
-
-text:"به سطح 5 برس",
-
-target:5,
-
-reward:1000,
-
-type:"level"
-
+  }
 
 }
 
 
-];
+function clickCoin(){
+
+  updateCombo();
+
+  const result =
+    clickReward();
+
+  const reward =
+    result.reward;
+
+  const crit =
+    result.crit;
 
 
+  game.coins += reward;
+
+  game.totalEarned += reward;
+
+  game.clicks++;
 
 
+  if(
+    game.coins >
+    game.best
+  ){
+
+    game.best =
+      Math.floor(game.coins);
+
+  }
+
+
+  addXP(1);
+
+  createParticles();
+
+  floatText(
+    `+${reward}${crit ? " 💥" : ""}`
+  );
+
+  sound(
+    crit ? 880 : 520,
+    .045
+  );
+
+  saveGame();
+
+  update();
+
+}
+
+
+document
+  .getElementById("coinButton")
+  .onclick = clickCoin;
+
+
+document
+  .getElementById("powerUpgrade")
+  .onclick = () => {
+
+    buy(
+      "power",
+      powerCost(),
+      () => game.power++,
+      "⚡ قدرت کلیک بیشتر شد"
+    );
+
+  };
+
+
+document
+  .getElementById("autoUpgrade")
+  .onclick = () => {
+
+    buy(
+      "auto",
+      autoCost(),
+      () => game.auto++,
+      "🤖 درآمد خودکار بیشتر شد"
+    );
+
+  };
+
+
+document
+  .getElementById("critUpgrade")
+  .onclick = () => {
+
+    const c =
+      critCost();
+
+    if(
+      game.coins < c
+    ){
+
+      return toast(
+        "🪙 سکه کافی نیست"
+      );
+
+    }
+
+    if(
+      game.critChance >= 35
+    ){
+
+      return toast(
+        "💥 شانس کریتیکال به سقف رسیده"
+      );
+
+    }
+
+    game.coins -= c;
+
+    game.critChance += 2;
+
+    addXP(20);
+
+    toast(
+      "💥 شانس کریتیکال افزایش یافت"
+    );
+
+    saveGame();
+
+    update();
+
+  };
+
+
+document
+  .getElementById("gemPowerUpgrade")
+  .onclick = () => {
+
+    const c =
+      gemPowerCost();
+
+    if(
+      game.gems < c
+    ){
+
+      return toast(
+        "💎 جم کافی نیست"
+      );
+
+    }
+
+    game.gems -= c;
+
+    game.gemPower++;
+
+    toast(
+      "💎 قدرت جم افزایش یافت"
+    );
+
+    saveGame();
+
+    update();
+
+  };
+
+
+function buy(
+  type,
+  cost,
+  fn,
+  msg
+){
+
+  if(
+    game.coins < cost
+  ){
+
+    return toast(
+      "🪙 سکه کافی نیست"
+    );
+
+  }
+
+  game.coins -= cost;
+
+  fn();
+
+  addXP(
+    type === "auto"
+      ? 15
+      : 10
+  );
+
+  toast(msg);
+
+  sound(600,.08);
+
+  saveGame();
+
+  update();
+
+}
+
+
+document
+  .getElementById("boostButton")
+  .onclick = () => {
+
+    if(
+      Date.now() <
+      game.boostUntil
+    ){
+
+      return;
+
+    }
+
+    game.boostUntil =
+      Date.now() + 30000;
+
+    toast(
+      "⚡ بوست ×2 فعال شد!"
+    );
+
+    sound(740,.15);
+
+    saveGame();
+
+    update();
+
+  };
+
+
+setInterval(
+  () => {
+
+    if(game.auto > 0){
+
+      const gain =
+        game.auto *
+        (
+          Date.now() <
+          game.boostUntil
+            ? 2
+            : 1
+        );
+
+      game.coins += gain;
+
+      game.totalEarned += gain;
+
+      if(
+        game.coins >
+        game.best
+      ){
+
+        game.best =
+          Math.floor(
+            game.coins
+          );
+
+      }
+
+      addXP(1);
+
+      saveGame();
+
+      update();
+
+    }
+
+  },
+  1000
+);
+
+
+setInterval(
+  () => {
+
+    if(
+      game.comboTime > 0
+    ){
+
+      game.comboTime =
+        Math.max(
+          0,
+          game.comboTime - 100
+        );
+
+      if(
+        game.comboTime === 0
+      ){
+
+        game.combo = 0;
+
+      }
+
+      update();
+
+    }
+
+  },
+  100
+);
 
 
 function missionValue(m){
 
+  if(
+    m.type === "click"
+  )
+    return game.clicks;
 
+  if(
+    m.type === "earn"
+  )
+    return game.totalEarned;
 
-if(m.type==="click")
+  if(
+    m.type === "level"
+  )
+    return game.level;
 
-return game.clicks;
+  if(
+    m.type === "combo"
+  )
+    return game.bestCombo;
 
+  if(
+    m.type === "crit"
+  )
+    return game.critCount;
 
-
-if(m.type==="earn")
-
-return game.totalEarned;
-
-
-
-if(m.type==="level")
-
-return game.level;
-
-
-
-return 0;
-
+  return 0;
 
 }
-
-
-
-
-
 
 
 function drawMissions(){
 
+  const b =
+    document.getElementById(
+      "missionList"
+    );
 
-let box =
-document.getElementById(
-"missionList"
-);
-
-
-
-if(!box)
-return;
+  b.innerHTML = "";
 
 
+  missions.forEach(
+    m => {
 
-box.innerHTML="";
+      let v =
+        Math.min(
+          missionValue(m),
+          m.target
+        );
 
-
-
-missions.forEach(m=>{
-
-
-
-let value =
-missionValue(m);
-
-
-
-if(value>m.target)
-
-value=m.target;
+      let done =
+        game.claimedMissions
+          .includes(m.id);
 
 
+      let d =
+        document.createElement(
+          "div"
+        );
 
-let done =
-game.claimedMissions.includes(m.id);
-
-
-
-let html=document.createElement("div");
-
-
-html.className="mission";
+      d.className =
+        "mission";
 
 
+      d.innerHTML = `
 
-html.innerHTML=`
+        <b>${m.title}</b>
 
-<b>${m.title}</b>
+        <p>
+          ${m.text}
+        </p>
 
-<p>${m.text}</p>
+        <p>
+          ${v}/${m.target}
+        </p>
 
-<p>
-${value}/${m.target}
-</p>
+        <div class="progress">
 
-<button
+          <div
+            style="width:${v / m.target * 100}%"
+          ></div>
 
-${done || value<m.target ? "disabled":""}
+        </div>
 
-onclick="claimMission('${m.id}')"
+        <button
+          ${done || v < m.target
+            ? "disabled"
+            : ""}
+        >
 
->
+          ${
+            done
+              ? "دریافت شد"
+              : `دریافت +${m.reward} 🪙`
+          }
 
-${done?"دریافت شد":"دریافت جایزه"}
+        </button>
 
-</button>
-
-`;
-
-
-
-box.appendChild(html);
-
-
-
-});
+      `;
 
 
+      d
+        .querySelector("button")
+        .onclick =
+        () =>
+          claimMission(m.id);
+
+
+      b.appendChild(d);
+
+    }
+  );
 
 }
-
-
-
-
-
 
 
 function claimMission(id){
 
-
-
-let m =
-missions.find(x=>x.id===id);
-
-
-
-if(!m)
-return;
-
-
-
-if(game.claimedMissions.includes(id))
-return;
-
-
-
-if(missionValue(m)<m.target)
-return;
-
-
-
-game.claimedMissions.push(id);
-
-
-
-game.coins += m.reward;
-
-
-
-toast(
-"🎯 جایزه مأموریت گرفتی"
-);
-
-
-
-saveGame();
-
-
-update();
-
-
-drawMissions();
-
-
-}
-// ======================
-// جایزه روزانه
-// ======================
-
-
-document
-.getElementById("dailyButton")
-.onclick=function(){
-
-
-    let today =
-    new Date().toDateString();
-
-
-
-    if(game.daily===today){
-
-
-        toast(
-            "🎁 جایزه امروز را گرفتی"
-        );
-
-
-        return;
-
-    }
-
-
-
-    game.daily=today;
-
-
-
-    game.coins += 500;
-
-
-    game.totalEarned += 500;
-
-
-
-    addXP(20);
-
-
-
-    toast(
-        "🎁 +500 سکه دریافت کردی"
+  const m =
+    missions.find(
+      x => x.id === id
     );
 
 
+  if(
+    !m ||
+    game.claimedMissions.includes(id) ||
+    missionValue(m) < m.target
+  ){
 
-    saveGame();
+    return;
 
-
-    update();
-
-
-
-};
-
-
+  }
 
 
+  game.claimedMissions.push(id);
 
+  game.coins += m.reward;
 
+  game.gems += 1;
 
-// ======================
-// اسکین ها
-// ======================
+  toast(
+    `🎯 مأموریت کامل شد! +${m.reward} 🪙 +1 💎`
+  );
 
+  addXP(25);
 
-const skins=[
+  saveGame();
 
-
-{
-
-id:"classic",
-
-name:"🪙 کلاسیک",
-
-icon:"🪙",
-
-price:0
-
-},
-
-
-{
-
-id:"gold",
-
-name:"🥇 طلایی",
-
-icon:"🥇",
-
-price:1000
-
-},
-
-
-{
-
-id:"diamond",
-
-name:"💎 الماس",
-
-icon:"💎",
-
-price:5000
-
-},
-
-
-{
-
-id:"fire",
-
-name:"🔥 آتش",
-
-icon:"🔥",
-
-price:10000
+  update();
 
 }
 
 
-];
+function achValue(a){
+
+  return missionValue({
+    type: a.type
+  });
+
+}
 
 
+function drawAchievements(){
+
+  const b =
+    document.getElementById(
+      "achievementList"
+    );
+
+  b.innerHTML = "";
 
 
+  achievements.forEach(
+    a => {
+
+      let v =
+        Math.min(
+          achValue(a),
+          a.target
+        );
+
+      let done =
+        game.claimedAchievements
+          .includes(a.id);
+
+
+      let d =
+        document.createElement(
+          "div"
+        );
+
+      d.className =
+        "achievement";
+
+
+      d.innerHTML = `
+
+        <div class="icon">
+          ${a.title.split(" ")[0]}
+        </div>
+
+        <div class="body">
+
+          <b>
+            ${a.title}
+          </b>
+
+          <p>
+            ${a.text}
+            —
+            ${v}/${a.target}
+          </p>
+
+          <div class="progress">
+
+            <div
+              style="width:${v / a.target * 100}%"
+            ></div>
+
+          </div>
+
+          <button
+            ${done || v < a.target
+              ? "disabled"
+              : ""}
+          >
+
+            ${
+              done
+                ? "تکمیل شد"
+                : `دریافت +${a.reward} 💎`
+            }
+
+          </button>
+
+        </div>
+
+      `;
+
+
+      d
+        .querySelector("button")
+        .onclick = () => {
+
+          game.claimedAchievements
+            .push(a.id);
+
+          game.gems += a.reward;
+
+          toast(
+            `🏆 دستاورد باز شد! +${a.reward} 💎`
+          );
+
+          saveGame();
+
+          update();
+
+        };
+
+
+      b.appendChild(d);
+
+    }
+  );
+
+}
 
 
 function drawSkins(){
 
+  const b =
+    document.getElementById(
+      "skinList"
+    );
 
-let box =
-document.getElementById(
-"skinList"
-);
-
-
-
-if(!box)
-return;
+  b.innerHTML = "";
 
 
+  skins.forEach(
+    s => {
 
-box.innerHTML="";
-
-
-
-skins.forEach(s=>{
-
-
-let owned =
-game.skins.includes(s.id);
+      const owned =
+        game.skins.includes(
+          s.id
+        );
 
 
+      const d =
+        document.createElement(
+          "div"
+        );
 
-let div =
-document.createElement("div");
-
-
-
-div.className="skin";
-
-
-
-div.innerHTML=`
-
-<b>${s.name}</b>
-
-<p>
-قیمت:
-${s.price}
-🪙
-</p>
+      d.className =
+        "skin";
 
 
-<button onclick="selectSkin('${s.id}')">
+      d.innerHTML = `
 
-${
+        <div class="icon">
+          ${s.icon}
+        </div>
 
-game.selectedSkin===s.id
+        <div class="body">
 
-?
+          <b>
+            ${s.name}
+          </b>
 
-"فعال"
+          <p>
+            ${
+              s.price
+                ? `${s.price} 🪙`
+                : "رایگان"
+            }
+          </p>
 
-:
+          <button>
 
-owned
+            ${
+              game.selectedSkin === s.id
+                ? "فعال"
+                : owned
+                  ? "انتخاب"
+                  : "خرید"
+            }
 
-?
+          </button>
 
-"انتخاب"
+        </div>
 
-:
-
-"خرید"
-
-}
-
-</button>
-
-`;
-
-
-
-box.appendChild(div);
-
-
-
-});
+      `;
 
 
+      d
+        .querySelector("button")
+        .onclick =
+        () => selectSkin(s);
+
+
+      b.appendChild(d);
+
+    }
+  );
 
 }
 
 
+function selectSkin(s){
+
+  if(
+    !game.skins.includes(
+      s.id
+    )
+  ){
+
+    if(
+      game.coins < s.price
+    ){
+
+      return toast(
+        "🪙 سکه کافی نیست"
+      );
+
+    }
+
+    game.coins -= s.price;
+
+    game.skins.push(s.id);
+
+    toast(
+      "🎨 اسکین خریداری شد"
+    );
+
+  }
 
 
+  game.selectedSkin =
+    s.id;
 
 
-function selectSkin(id){
+  document
+    .getElementById(
+      "coinIcon"
+    )
+    .textContent =
+    s.icon;
 
 
-let skin =
-skins.find(x=>x.id===id);
+  saveGame();
 
-
-
-if(!skin)
-return;
-
-
-
-if(!game.skins.includes(id)){
-
-
-
-if(game.coins < skin.price){
-
-
-toast(
-"🪙 سکه کافی نیست"
-);
-
-
-return;
-
+  update();
 
 }
-
-
-
-game.coins -= skin.price;
-
-
-
-game.skins.push(id);
-
-
-
-}
-
-
-
-game.selectedSkin=id;
-
 
 
 document
-.getElementById("coinIcon")
-.textContent=skin.icon;
+  .querySelectorAll(
+    "nav button"
+  )
+  .forEach(
+    btn => {
+
+      btn.onclick = () => {
+
+        document
+          .querySelectorAll(
+            "nav button"
+          )
+          .forEach(
+            x =>
+              x.classList.remove(
+                "active"
+              )
+          );
 
 
-
-saveGame();
-
-
-drawSkins();
+        btn.classList.add(
+          "active"
+        );
 
 
-update();
+        document
+          .querySelectorAll(
+            ".page"
+          )
+          .forEach(
+            p =>
+              p.classList.remove(
+                "active"
+              )
+          );
 
 
+        document
+          .getElementById(
+            btn.dataset.page
+          )
+          .classList.add(
+            "active"
+          );
 
-}
+      };
 
-
-
-
-
-
-
-
-// ======================
-// تغییر صفحات
-// ======================
+    }
+  );
 
 
 document
-.querySelectorAll("nav button")
-.forEach(btn=>{
+  .getElementById(
+    "dailyButton"
+  )
+  .onclick = () => {
+
+    const today =
+      new Date().toDateString();
 
 
-btn.onclick=function(){
+    if(
+      game.daily === today
+    ){
 
+      return toast(
+        "🎁 جایزه امروز را قبلاً گرفتی"
+      );
+
+    }
+
+
+    const y =
+      new Date();
+
+    y.setDate(
+      y.getDate() - 1
+    );
+
+
+    game.streak =
+      game.lastDaily ===
+      y.toDateString()
+        ? game.streak + 1
+        : 1;
+
+
+    game.daily =
+      today;
+
+    game.lastDaily =
+      today;
+
+
+    const reward =
+      300 +
+      Math.min(
+        game.streak,
+        7
+      ) * 100;
+
+
+    game.coins += reward;
+
+    game.totalEarned += reward;
+
+
+    game.gems +=
+      game.streak % 7 === 0
+        ? 3
+        : 1;
+
+
+    addXP(30);
+
+
+    toast(
+      `🎁 +${reward} 🪙 و جایزه استریک`
+    );
+
+
+    saveGame();
+
+    update();
+
+  };
 
 
 document
-.querySelectorAll(".page")
-.forEach(p=>{
+  .getElementById(
+    "soundButton"
+  )
+  .onclick = () => {
 
+    game.sound =
+      !game.sound;
 
-p.classList.remove(
-"active"
-);
+    update();
 
+    saveGame();
 
-});
-
+  };
 
 
 document
-.getElementById(
-btn.dataset.page
-)
-.classList.add(
-"active"
-);
+  .getElementById(
+    "saveButton"
+  )
+  .onclick = () => {
+
+    saveGame();
+
+    toast(
+      "💾 بازی ذخیره شد"
+    );
+
+  };
 
 
+document
+  .getElementById(
+    "exportButton"
+  )
+  .onclick = () => {
 
-};
+    const blob =
+      new Blob(
+        [
+          JSON.stringify(
+            game,
+            null,
+            2
+          )
+        ],
+        {
+          type:
+            "application/json"
+        }
+      );
 
 
-
-});
-
-
-
-
+    const a =
+      document.createElement(
+        "a"
+      );
 
 
+    a.href =
+      URL.createObjectURL(
+        blob
+      );
 
 
-// ======================
-// افکت ذرات
-// ======================
+    a.download =
+      "tap-empire-save.json";
+
+
+    a.click();
+
+
+    toast(
+      "📦 فایل ذخیره ساخته شد"
+    );
+
+  };
+
+
+document
+  .getElementById(
+    "resetButton"
+  )
+  .onclick = () => {
+
+    if(
+      confirm(
+        "⚠️ همه پیشرفت پاک شود؟"
+      )
+    ){
+
+      localStorage.removeItem(
+        SAVE_KEY
+      );
+
+      location.reload();
+
+    }
+
+  };
+
+
+document
+  .getElementById(
+    "rubikaButton"
+  )
+  .onclick =
+  () =>
+    window.location.href =
+      "https://rubika.ir/tapking";
+
+
+document
+  .getElementById(
+    "supportButton"
+  )
+  .onclick =
+  () =>
+    window.location.href =
+      "https://hamibash.com/Tapking";
 
 
 function createParticles(){
 
+  const a =
+    document.getElementById(
+      "particles"
+    );
 
 
-let area =
-document.getElementById(
-"particles"
-);
+  const r =
+    document
+      .getElementById(
+        "coinButton"
+      )
+      .getBoundingClientRect();
 
 
+  for(
+    let i = 0;
+    i < 12;
+    i++
+  ){
 
-let button =
-document.getElementById(
-"coinButton"
-);
-
-
-
-let rect =
-button.getBoundingClientRect();
-
-
-
-for(let i=0;i<10;i++){
+    const p =
+      document.createElement(
+        "div"
+      );
 
 
-
-let p =
-document.createElement("div");
-
+    p.className =
+      "particle";
 
 
-p.className="particle";
+    p.style.left =
+      r.left +
+      r.width / 2 +
+      "px";
 
 
-
-p.style.left =
-rect.left+
-rect.width/2+
-"px";
-
+    p.style.top =
+      r.top +
+      r.height / 2 +
+      "px";
 
 
-p.style.top =
-rect.top+
-rect.height/2+
-"px";
+    p.style.setProperty(
+      "--x",
+      Math.random() * 160 - 80 +
+      "px"
+    );
 
 
-
-p.style.setProperty(
-"--x",
-(Math.random()*120-60)+"px"
-);
-
-
-
-p.style.setProperty(
-"--y",
-(Math.random()*120-60)+"px"
-);
+    p.style.setProperty(
+      "--y",
+      Math.random() * 160 - 80 +
+      "px"
+    );
 
 
-
-area.appendChild(p);
-
+    a.appendChild(p);
 
 
-setTimeout(()=>{
+    setTimeout(
+      () => p.remove(),
+      700
+    );
 
-p.remove();
-
-},700);
-
-
+  }
 
 }
 
 
+function floatText(t){
+
+  const r =
+    document
+      .getElementById(
+        "coinButton"
+      )
+      .getBoundingClientRect();
+
+
+  const d =
+    document.createElement(
+      "div"
+    );
+
+
+  d.className =
+    "float-text";
+
+
+  d.textContent =
+    t;
+
+
+  d.style.left =
+    r.left +
+    r.width / 2 -
+    20 +
+    "px";
+
+
+  d.style.top =
+    r.top +
+    30 +
+    "px";
+
+
+  document.body.appendChild(d);
+
+
+  setTimeout(
+    () => d.remove(),
+    900
+  );
+
 }
-// ======================
-// نمایش اطلاعات
-// ======================
+
+
+function sound(
+  freq,
+  dur
+){
+
+  if(!game.sound)
+    return;
+
+
+  try{
+
+    audioCtx ??=
+      new (
+        window.AudioContext ||
+        window.webkitAudioContext
+      )();
+
+
+    const o =
+      audioCtx.createOscillator();
+
+
+    const g =
+      audioCtx.createGain();
+
+
+    o.frequency.value =
+      freq;
+
+    o.type =
+      "sine";
+
+
+    g.gain.setValueAtTime(
+      .03,
+      audioCtx.currentTime
+    );
+
+
+    g.gain.exponentialRampToValueAtTime(
+      .001,
+      audioCtx.currentTime + dur
+    );
+
+
+    o.connect(g);
+
+    g.connect(
+      audioCtx.destination
+    );
+
+
+    o.start();
+
+    o.stop(
+      audioCtx.currentTime +
+      dur
+    );
+
+  }catch(e){}
+
+}
 
 
 function update(){
 
+  const set =
+    (id,v) => {
 
-document.getElementById("coins").textContent =
-Math.floor(game.coins);
+      const e =
+        document.getElementById(
+          id
+        );
 
+      if(e)
+        e.textContent = v;
 
-
-document.getElementById("best").textContent =
-Math.floor(game.best);
-
-
-
-document.getElementById("power").textContent =
-game.power;
-
+    };
 
 
-document.getElementById("auto").textContent =
-game.auto;
+  set(
+    "coins",
+    Math.floor(game.coins)
+  );
+
+  set(
+    "gems",
+    game.gems
+  );
+
+  set(
+    "best",
+    game.best
+  );
+
+  set(
+    "power",
+    game.power
+  );
+
+  set(
+    "auto",
+    game.auto
+  );
+
+  set(
+    "clicks",
+    game.clicks
+  );
+
+  set(
+    "totalEarned",
+    Math.floor(
+      game.totalEarned
+    )
+  );
+
+  set(
+    "bestCombo",
+    game.bestCombo
+  );
+
+  set(
+    "critCount",
+    game.critCount
+  );
+
+  set(
+    "homePower",
+    game.power
+  );
+
+  set(
+    "levelValue",
+    game.level
+  );
+
+  set(
+    "levelBig",
+    game.level
+  );
+
+  set(
+    "xpValue",
+    game.xp
+  );
+
+  set(
+    "xpNeed",
+    xpNeed()
+  );
+
+  set(
+    "levelReward",
+    25 +
+    game.level * 25
+  );
+
+  set(
+    "combo",
+    game.combo
+  );
+
+  set(
+    "multiplier",
+    "x" +
+    comboMultiplier()
+  );
 
 
-
-document.getElementById("homePower").textContent =
-game.power;
-
-
-
-document.getElementById("homeAuto").textContent =
-game.auto;
-
-
-
-document.getElementById("clickPowerText").textContent =
-"+"+
-Math.floor(game.power * comboMultiplier());
-
-
-
-document.getElementById("combo").textContent =
-game.combo;
+  set(
+    "clickPowerText",
+    "+" +
+    Math.floor(
+      game.power *
+      (1 + game.gemPower * .25) *
+      comboMultiplier() *
+      (
+        Date.now() <
+        game.boostUntil
+          ? 2
+          : 1
+      )
+    )
+  );
 
 
+  set(
+    "powerCost",
+    powerCost()
+  );
 
-document.getElementById("multiplier").textContent =
-"x"+
-comboMultiplier();
+  set(
+    "autoCost",
+    autoCost()
+  );
 
+  set(
+    "critCost",
+    critCost()
+  );
 
+  set(
+    "gemPowerCost",
+    gemPowerCost()
+  );
 
-document.getElementById("powerCost").textContent =
-powerCost();
+  set(
+    "streak",
+    game.streak
+  );
 
-
-
-document.getElementById("autoCost").textContent =
-autoCost();
-
-
-
-document.getElementById("levelValue").textContent =
-game.level;
-
-
-
-document.getElementById("xpValue").textContent =
-game.xp;
-
-
-
-document.getElementById("xpNeed").textContent =
-xpNeed();
-
-
-
-document.getElementById("xpBar").style.width =
-
-(
-(game.xp / xpNeed()) * 100
-)
-+
-"%";
+  set(
+    "comboTimer",
+    (
+      game.comboTime / 1000
+    ).toFixed(1)
+  );
 
 
+  document
+    .getElementById(
+      "xpBar"
+    )
+    .style.width =
+      (
+        game.xp /
+        xpNeed() *
+        100
+      ) +
+      "%";
 
-drawMissions();
+
+  document
+    .getElementById(
+      "comboBar"
+    )
+    .style.width =
+      (
+        game.comboTime /
+        comboMax *
+        100
+      ) +
+      "%";
 
 
-drawSkins();
+  const boost =
+    document.getElementById(
+      "boostButton"
+    );
 
 
+  const active =
+    Date.now() <
+    game.boostUntil;
+
+
+  boost.disabled =
+    active;
+
+
+  document
+    .getElementById(
+      "boostText"
+    )
+    .textContent =
+      active
+        ? Math.ceil(
+            (
+              game.boostUntil -
+              Date.now()
+            ) / 1000
+          ) + "s"
+        : "30s";
+
+
+  document
+    .getElementById(
+      "soundButton"
+    )
+    .textContent =
+      game.sound
+        ? "🔊 صدا: روشن"
+        : "🔇 صدا: خاموش";
+
+
+  document
+    .getElementById(
+      "coinIcon"
+    )
+    .textContent =
+      skins.find(
+        s =>
+          s.id ===
+          game.selectedSkin
+      )?.icon ||
+      "🪙";
+
+
+  drawMissions();
+
+  drawAchievements();
+
+  drawSkins();
+
+
+  if(
+    game.daily ===
+    new Date().toDateString()
+  ){
+
+    document
+      .getElementById(
+        "dailyText"
+      )
+      .textContent =
+        "🎉 جایزه امروز دریافت شده";
+
+  }else{
+
+    document
+      .getElementById(
+        "dailyText"
+      )
+      .textContent =
+        `جایزه آماده است — استریک فعلی: ${game.streak} روز`;
+
+  }
+
+
+  const offline =
+    Math.min(
+      Math.max(
+        0,
+        Date.now() -
+        game.lastSeen
+      ),
+      8 * 60 * 60 * 1000
+    );
+
+
+  if(
+    offline > 60000 &&
+    game.auto > 0
+  ){
+
+    const gain =
+      Math.floor(
+        offline / 1000 *
+        game.auto *
+        .5
+      );
+
+
+    if(gain > 0){
+
+      game.coins += gain;
+
+      game.totalEarned += gain;
+
+
+      document
+        .getElementById(
+          "offlineBox"
+        )
+        .classList
+        .remove(
+          "hidden"
+        );
+
+
+      document
+        .getElementById(
+          "offlineBox"
+        )
+        .textContent =
+          `💤 در زمان غیبتت ${gain} سکه درآمد داشتی!`;
+
+
+      saveGame();
+
+    }
+
+  }
 
 }
-
-
-
-
-
-
-
-
-// ======================
-// ذخیره دستی
-// ======================
-
-
-document
-.getElementById("saveButton")
-.onclick=function(){
-
-
-saveGame();
-
-
-toast(
-"💾 بازی ذخیره شد"
-);
-
-
-};
-
-
-
-
-
-
-
-// ======================
-// شروع دوباره
-// ======================
-
-
-document
-.getElementById("resetButton")
-.onclick=function(){
-
-
-
-let answer =
-confirm(
-"⚠️ همه پیشرفت پاک شود؟"
-);
-
-
-
-if(answer){
-
-
-
-localStorage.removeItem(
-SAVE_KEY
-);
-
-
-
-location.reload();
-
-
-
-}
-
-
-};
-
-
-
-
-
-
-
-
-// ======================
-// لینک ها
-// ======================
-
-
-document
-.getElementById("rubikaButton")
-.onclick=function(){
-
-
-window.location.href =
-"https://rubika.ir/tapking";
-
-
-};
-
-
-
-
-document
-.getElementById("supportButton")
-.onclick=function(){
-
-
-window.location.href =
-"https://hamibash.com/Tapking";
-
-
-};
-
-
-
-
-
-
-
-// ======================
-// کمبو کاهش آهسته
-// ======================
-
-
-setInterval(()=>{
-
-
-if(game.combo>0){
-
-
-game.combo--;
 
 
 update();
 
 
-
-}
-
-
-},10000);
-
-
-
-
-
-
-
-// ======================
-// اجرای اولیه
-// ======================
-
-
-update();
-
-
-drawMissions();
-
-
-drawSkins();
+setInterval(
+  () => update(),
+  1000
+);
