@@ -1,417 +1,351 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Tap Empire</title>
-
+<title>Tap Empire V2</title>
 <link rel="stylesheet" href="style.css">
-
 </head>
-
 
 <body>
 
-
 <div id="toastBox"></div>
-
 <div id="particles"></div>
-
-
 
 <div class="container">
 
-
 <header>
-
-<h1>👑 Tap Empire</h1>
-
-<p>امپراتوری سکه خودت را بساز</p>
-
+  <div class="brand">👑</div>
+  <h1>Tap Empire <span>V2</span></h1>
+  <p>امپراتوری سکه‌ات را بساز</p>
 </header>
-
-
-
 
 <div class="stats">
 
+ <div class="card">
+   <span>🪙 سکه</span>
+   <strong id="coins">0</strong>
+ </div>
 
-<div class="card">
-🪙 سکه
-<strong id="coins">0</strong>
-</div>
+ <div class="card">
+   <span>💎 جم</span>
+   <strong id="gems">0</strong>
+ </div>
 
+ <div class="card">
+   <span>⚡ قدرت</span>
+   <strong id="power">1</strong>
+ </div>
 
-<div class="card">
-🏆 رکورد
-<strong id="best">0</strong>
-</div>
-
-
-<div class="card">
-⚡ قدرت
-<strong id="power">1</strong>
-</div>
-
-
-<div class="card">
-🤖 خودکار
-<strong id="auto">0</strong>
-</div>
-
+ <div class="card">
+   <span>🤖 خودکار</span>
+   <strong id="auto">0</strong>
+ </div>
 
 </div>
 
+<section class="hero-game">
 
+ <div class="rank-line">
+   <span>👑 سطح <b id="levelValue">1</b></span>
+   <span>🏆 رکورد <b id="best">0</b></span>
+ </div>
 
+ <div class="level-bar">
+   <div id="xpBar"></div>
+ </div>
 
+ <div class="xp-text">
+   XP:
+   <b id="xpValue">0</b>
+   /
+   <b id="xpNeed">100</b>
+ </div>
 
-<div class="coin-area">
+ <button
+   id="coinButton"
+   aria-label="کلیک برای دریافت سکه"
+ >
+   <span id="coinIcon">🪙</span>
+ </button>
 
+ <p class="click-power">
+   هر کلیک:
+   <b id="clickPowerText">+1</b>
+ </p>
 
-<button id="coinButton">
+ <div class="combo-box">
 
-<span id="coinIcon">🪙</span>
+   <span>
+     🔥 کمبو
+     <b id="combo">0</b>
+   </span>
 
-</button>
+   <span>
+     ضریب
+     <b id="multiplier">x1</b>
+   </span>
 
+   <span>
+     ⏱
+     <b id="comboTimer">0.0</b>s
+   </span>
 
-<p>
-هر کلیک:
-<span id="clickPowerText">+1</span>
-</p>
+ </div>
 
+ <div class="combo-bar">
+   <div id="comboBar"></div>
+ </div>
 
-<div class="combo">
+ <button id="boostButton" class="boost">
+   ⚡ فعال‌سازی بوست ×2
+   <small id="boostText">30s</small>
+ </button>
 
-🔥 کمبو:
-<b id="combo">0</b>
+ <div id="offlineBox" class="offline hidden"></div>
 
-ضریب:
-<b id="multiplier">x1</b>
-
-</div>
-
-
-</div>
-
-
-
-
-
-
+</section>
 
 <nav>
 
+ <button class="active" data-page="home">
+   🏠
+   <span>خانه</span>
+ </button>
 
-<button data-page="home">
-🏠 خانه
-</button>
+ <button data-page="shop">
+   🛒
+   <span>فروشگاه</span>
+ </button>
 
+ <button data-page="missions">
+   🎯
+   <span>مأموریت</span>
+ </button>
 
-<button data-page="shop">
-🛒 فروشگاه
-</button>
+ <button data-page="daily">
+   🎁
+   <span>جایزه</span>
+ </button>
 
+ <button data-page="level">
+   👑
+   <span>سطح</span>
+ </button>
 
-<button data-page="missions">
-🎯 مأموریت
-</button>
+ <button data-page="skins">
+   🎨
+   <span>اسکین</span>
+ </button>
 
+ <button data-page="achievements">
+   🏆
+   <span>دستاورد</span>
+ </button>
 
-<button data-page="daily">
-🎁 جایزه
-</button>
-
-
-<button data-page="level">
-👑 سطح
-</button>
-
-
-<button data-page="skins">
-🎨 اسکین
-</button>
-
-
-<button data-page="more">
-⚙️ بیشتر
-</button>
-
+ <button data-page="more">
+   ⚙️
+   <span>بیشتر</span>
+ </button>
 
 </nav>
 
-
-
-
-
-
-
 <section id="home" class="page active">
 
+ <h2>🏠 مرکز امپراتوری</h2>
 
-<h2>🏠 خانه</h2>
+ <div class="grid2">
 
+  <div class="box">
+    <span>👆 کلیک‌ها</span>
+    <b id="clicks">0</b>
+  </div>
 
-<div class="box">
+  <div class="box">
+    <span>📈 کل درآمد</span>
+    <b id="totalEarned">0</b>
+  </div>
 
+  <div class="box">
+    <span>🔥 بهترین کمبو</span>
+    <b id="bestCombo">0</b>
+  </div>
 
-<p>
-قدرت کلیک:
-<span id="homePower">1</span>
-</p>
+  <div class="box">
+    <span>💥 کریتیکال</span>
+    <b id="critCount">0</b>
+  </div>
 
+ </div>
 
-<p>
-درآمد خودکار:
-<span id="homeAuto">0</span>
-</p>
-
-
-</div>
-
+ <div class="box tip">
+   💡 با کمبوهای طولانی ضریب بیشتر می‌گیری.
+   بوست را برای زمان‌های پرکلیک نگه دار!
+ </div>
 
 </section>
-
-
-
-
-
-
 
 <section id="shop" class="page">
 
+ <h2>🛒 فروشگاه</h2>
 
-<h2>🛒 فروشگاه</h2>
+ <div class="box">
 
+  <button id="powerUpgrade">
+    ⚡ ارتقای قدرت کلیک
+    <br>
+    <small>
+      قیمت:
+      <b id="powerCost">100</b>
+      🪙
+    </small>
+  </button>
 
+  <button id="autoUpgrade">
+    🤖 ارتقای درآمد خودکار
+    <br>
+    <small>
+      قیمت:
+      <b id="autoCost">250</b>
+      🪙
+    </small>
+  </button>
 
-<div class="box">
+  <button id="critUpgrade">
+    💥 ارتقای شانس کریتیکال
+    <br>
+    <small>
+      قیمت:
+      <b id="critCost">500</b>
+      🪙
+    </small>
+  </button>
 
+  <button id="gemPowerUpgrade">
+    💎 قدرت جم +1
+    <br>
+    <small>
+      قیمت:
+      <b id="gemPowerCost">5</b>
+      💎
+    </small>
+  </button>
 
-<button id="powerUpgrade">
-
-ارتقای قدرت کلیک
-
-<br>
-
-قیمت:
-<span id="powerCost">100</span>
-🪙
-
-</button>
-
-
-
-
-<button id="autoUpgrade">
-
-ارتقای درآمد خودکار
-
-<br>
-
-قیمت:
-<span id="autoCost">250</span>
-🪙
-
-</button>
-
-
-
-</div>
-
+ </div>
 
 </section>
-
-
-
-
-
-
-
 
 <section id="missions" class="page">
 
+ <h2>🎯 مأموریت‌ها</h2>
 
-<h2>🎯 مأموریت‌ها</h2>
-
-
-<div id="missionList"></div>
-
+ <div id="missionList"></div>
 
 </section>
-
-
-
-
-
-
-
 
 <section id="daily" class="page">
 
+ <h2>🎁 جایزه روزانه</h2>
 
-<h2>🎁 جایزه روزانه</h2>
+ <div class="box daily-card">
 
+  <div class="streak">
+    🔥 استریک:
+    <b id="streak">0</b>
+    روز
+  </div>
 
-<div class="box">
+  <p id="dailyText">
+    جایزه آماده است
+  </p>
 
+  <button id="dailyButton">
+    دریافت جایزه
+  </button>
 
-<p id="dailyText">
-
-جایزه آماده است
-
-</p>
-
-
-
-<button id="dailyButton">
-
-دریافت جایزه
-
-</button>
-
-
-</div>
-
+ </div>
 
 </section>
-
-
-
-
-
-
 
 <section id="level" class="page">
 
+ <h2>👑 پیشرفت</h2>
 
-<h2>👑 سطح</h2>
+ <div class="box">
 
+  <p>
+    سطح فعلی:
+    <b id="levelBig">1</b>
+  </p>
 
-<div class="box">
+  <p>
+    پاداش سطح بعد:
+    <b id="levelReward">50</b>
+    🪙
+  </p>
 
+  <div class="level-info">
+    هر سطح XP موردنیاز بیشتری دارد
+    اما پاداش هم بالاتر می‌رود.
+  </div>
 
-<p>
-
-سطح:
-<b id="levelValue">1</b>
-
-</p>
-
-
-
-<p>
-
-XP:
-
-<span id="xpValue">0</span>
-
-/
-
-<span id="xpNeed">100</span>
-
-</p>
-
-
-
-<div class="bar">
-
-<div id="xpBar"></div>
-
-</div>
-
-
-</div>
-
+ </div>
 
 </section>
-
-
-
-
-
-
 
 <section id="skins" class="page">
 
+ <h2>🎨 اسکین‌ها</h2>
 
-<h2>🎨 اسکین‌ها</h2>
-
-
-<div id="skinList"></div>
-
+ <div id="skinList"></div>
 
 </section>
 
+<section id="achievements" class="page">
 
+ <h2>🏆 دستاوردها</h2>
 
+ <div id="achievementList"></div>
 
-
-
+</section>
 
 <section id="more" class="page">
 
+ <h2>⚙️ بیشتر</h2>
 
-<h2>⚙️ بیشتر</h2>
+ <div class="box">
 
+  <button id="soundButton">
+    🔊 صدا: روشن
+  </button>
 
-<div class="box">
+  <button id="saveButton">
+    💾 ذخیره بازی
+  </button>
 
+  <button id="exportButton">
+    📦 خروجی ذخیره
+  </button>
 
-<button id="saveButton">
+  <button id="resetButton">
+    🔄 شروع دوباره
+  </button>
 
-💾 ذخیره
+  <button id="rubikaButton">
+    📢 روبیکا
+  </button>
 
-</button>
+  <button id="supportButton">
+    ❤️ حمایت
+  </button>
 
-
-
-<button id="resetButton">
-
-🔄 شروع دوباره
-
-</button>
-
-
-
-<button id="rubikaButton">
-
-📢 روبیکا
-
-</button>
-
-
-
-<button id="supportButton">
-
-❤️ حمایت
-
-</button>
-
-
-
-</div>
-
+ </div>
 
 </section>
 
-
-
-
-
-
 </div>
-
-
-
-
 
 <script src="game.js"></script>
 
-
 </body>
-
 </html>
