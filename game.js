@@ -10,10 +10,10 @@ const skins=[
 {id:'fire',name:'آتش',icon:'🔥',price:40000,tier:'حماسی',clickBonus:.30,autoBonus:.30,color:'#a855f7'},
 {id:'crown',name:'سلطنتی',icon:'👑',price:100000,tier:'افسانه‌ای',clickBonus:.50,autoBonus:.50,color:'#eab308'},
 {id:'mythic',name:'اسطوره‌ای',icon:'🐉',price:700000,tier:'اسطوره‌ای',clickBonus:.75,autoBonus:.75,color:'#ef4444'},
-{id:'ronaldo',name:'کریستیانو رونالدو',icon:'⚽',image:'assets/skins/ronaldo.png',price:800000,tier:'فوتبالی',clickBonus:.60,autoBonus:.60,color:'#16a34a'},
-{id:'messi',name:'لیونل مسی',icon:'⚽',image:'assets/skins/messi.png',price:800000,tier:'فوتبالی',clickBonus:.60,autoBonus:.60,color:'#38bdf8'},
-{id:'neymar',name:'نیمار',icon:'⚽',image:'assets/skins/neymar.png',price:800000,tier:'فوتبالی',clickBonus:.60,autoBonus:.60,color:'#f59e0b'},
-{id:'mbappe',name:'کیلیان امباپه',icon:'⚽',image:'assets/skins/mbappe.png',price:800000,tier:'فوتبالی',clickBonus:.60,autoBonus:.60,color:'#8b5cf6'}
+{id:'ronaldo',name:'کریستیانو رونالدو',icon:'⚽',image:'assets/skins/ronaldo.png',price:3000000,tier:'فوتبالی',clickBonus:.95,autoBonus:.95,color:'#16a34a'},
+{id:'messi',name:'لیونل مسی',icon:'⚽',image:'assets/skins/messi.png',price:3000000,tier:'فوتبالی',clickBonus:.95,autoBonus:.95,color:'#38bdf8'},
+{id:'neymar',name:'نیمار',icon:'⚽',image:'assets/skins/neymar.png',price:3000000,tier:'فوتبالی',clickBonus:.95,autoBonus:.95,color:'#f59e0b'},
+{id:'mbappe',name:'کیلیان امباپه',icon:'⚽',image:'assets/skins/mbappe.png',price:3000000,tier:'فوتبالی',clickBonus:.95,autoBonus:.95,color:'#8b5cf6'}
 ];
 const missions=[
 {id:'click100',title:'👆 صد کلیک',text:'100 بار کلیک کن',target:100,reward:200,type:'click'},
