@@ -1,22 +1,7 @@
-Tap Empire V2
+اسکین‌های فوتبالی: فایل‌های PNG خودت را با این نام‌ها در همین پوشه قرار بده:
+ronaldo.png
+messi.png
+neymar.png
+mbappe.png
 
-Files:
-- index.html
-- style.css
-- game.js
-
-Open index.html in a modern browser.
-
-V2 features:
-- Combo timer and multipliers
-- Critical hits
-- Temporary x2 boost
-- Gems and gem power
-- Achievements
-- Expanded missions
-- Daily streak rewards
-- Offline income
-- Sound toggle
-- Save export JSON
-- New royal skin
-- Existing localStorage save key preserved
+مسیرها باید دقیقاً همین باشند. اگر تصویری وجود نداشته باشد، بازی به‌جای آن ⚽ نشان می‌دهد.
