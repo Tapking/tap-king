@@ -1,16 +1,35 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tap Empire V2</title><link rel="stylesheet" href="style.css"></head><body>
-<div id="toastBox"></div><div id="particles"></div><div class="container">
-<header><div class="brand">👑</div><h1>Tap Empire <span>V2</span></h1><p>امپراتوری سکه‌ات را بساز</p></header>
-<div class="stats"><div class="card"><span>🪙 سکه</span><strong id="coins">0</strong></div><div class="card"><span>💎 جم</span><strong id="gems">0</strong></div><div class="card"><span>⚡ قدرت</span><strong id="power">1</strong></div><div class="card"><span>🤖 خودکار</span><strong id="auto">0</strong></div></div>
-<section class="hero-game"><div class="rank-line"><span>👑 سطح <b id="levelValue">1</b></span><span>🏆 رکورد <b id="best">0</b></span></div><div class="level-bar"><div id="xpBar"></div></div><div class="xp-text">XP: <b id="xpValue">0</b> / <b id="xpNeed">100</b></div><button id="coinButton" aria-label="کلیک برای دریافت سکه"><span id="coinIcon">🪙</span></button><p class="click-power">هر کلیک: <b id="clickPowerText">+1</b></p><div class="combo-box"><span>🔥 کمبو <b id="combo">0</b></span><span>ضریب <b id="multiplier">x1</b></span><span>⏱ <b id="comboTimer">0.0</b>s</span></div><div class="combo-bar"><div id="comboBar"></div></div><button id="boostButton" class="boost">⚡ فعال‌سازی بوست ×2 <small id="boostText">30s</small></button><div id="offlineBox" class="offline hidden"></div></section>
-<nav><button class="active" data-page="home">🏠<span>خانه</span></button><button data-page="shop">🛒<span>فروشگاه</span></button><button data-page="missions">🎯<span>مأموریت</span></button><button data-page="daily">🎁<span>جایزه</span></button><button data-page="level">👑<span>سطح</span></button><button data-page="skins">🎨<span>اسکین</span></button><button data-page="achievements">🏆<span>دستاورد</span></button><button data-page="more">⚙️<span>بیشتر</span></button></nav>
-<section id="home" class="page active"><h2>🏠 مرکز امپراتوری</h2><div class="grid2"><div class="box"><span>👆 کلیک‌ها</span><b id="clicks">0</b></div><div class="box"><span>📈 کل درآمد</span><b id="totalEarned">0</b></div><div class="box"><span>🔥 بهترین کمبو</span><b id="bestCombo">0</b></div><div class="box"><span>💥 کریتیکال</span><b id="critCount">0</b></div></div><div class="box tip">💡 با کمبوهای طولانی ضریب بیشتر می‌گیری. بوست را برای زمان‌های پرکلیک نگه دار!</div></section>
-<section id="shop" class="page"><h2>🛒 فروشگاه</h2><div class="box"><button id="powerUpgrade">⚡ ارتقای قدرت کلیک<br><small>قیمت: <b id="powerCost">100</b> 🪙</small></button><button id="autoUpgrade">🤖 ارتقای درآمد خودکار<br><small>قیمت: <b id="autoCost">250</b> 🪙</small></button><button id="critUpgrade">💥 ارتقای شانس کریتیکال<br><small>قیمت: <b id="critCost">500</b> 🪙</small></button><button id="gemPowerUpgrade">💎 قدرت جم +1<br><small>قیمت: <b id="gemPowerCost">5</b> 💎</small></button></div></section>
-<section id="missions" class="page"><h2>🎯 مأموریت‌ها</h2><div class="weekly-head"><span id="weekLabel">مأموریت‌های این هفته</span><span id="weeklyCountdown"></span></div><div id="missionList"></div></section>
-<section id="daily" class="page"><h2>🎁 جایزه روزانه</h2><div class="box daily-card"><div class="streak">🔥 استریک: <b id="streak">0</b> روز</div><p id="dailyText">جایزه آماده است</p><button id="dailyButton">دریافت جایزه</button></div></section>
-<section id="level" class="page"><h2>👑 پیشرفت</h2><div class="box"><p>سطح فعلی: <b id="levelBig">1</b></p><p>پاداش سطح بعد: <b id="levelReward">50</b> 🪙</p><div class="level-info">هر سطح XP موردنیاز بیشتری دارد اما پاداش هم بالاتر می‌رود.</div></div></section>
-<section id="skins" class="page"><h2>🎨 اسکین‌ها</h2><p class="skin-help">قدرت اسکین فعال روی درآمد کلیک و خودکار اعمال می‌شود.</p><div id="skinList"></div></section>
-<section id="achievements" class="page"><h2>🏆 دستاوردها</h2><div id="achievementList"></div></section>
-<section id="more" class="page"><h2>⚙️ بیشتر</h2><div class="box"><button id="soundButton">🔊 صدا: روشن</button><button id="saveButton">💾 ذخیره بازی</button><button id="exportButton">📦 خروجی ذخیره اکانت</button><button id="importButton">📥 واردکردن اکانت</button><input id="importFile" type="file" accept="application/json" hidden><button id="exportCoinsButton">🪙 خروجی انتقال سکه</button><button id="importCoinsButton">📥 دریافت سکه از فایل</button><input id="coinGiftFile" type="file" accept="application/json" hidden><button id="resetButton">🔄 شروع دوباره</button><button id="rubikaButton">📢 روبیکا</button><button id="supportButton">❤️ حمایت</button></div></section>
-</div><script src="game.js"></script></body></html>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:radial-gradient(circle at top,#172554,#0f172a 55%);color:#fff;font-family:tahoma,Arial,sans-serif}
+.container{width:94%;max-width:560px;margin:auto;padding:18px 0 30px}
+header{text-align:center;margin-bottom:16px}
+.brand{font-size:38px;filter:drop-shadow(0 0 15px #facc15)}
+header h1{font-size:30px}
+header h1 span{font-size:13px;background:#facc15;color:#111;padding:4px 7px;border-radius:8px;vertical-align:middle}
+header p{color:#94a3b8;margin-top:7px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.card,.box,.mission,.skin,.achievement{background:rgba(30,41,59,.9);border:1px solid #334155;border-radius:16px;padding:12px;box-shadow:0 10px 30px #0002}
+.card{text-align:center}
+.card span{font-size:11px;color:#cbd5e1}
+.card strong{display:block;font-size:19px;margin-top:5px}
+.hero-game{text-align:center;padding:18px 0 10px}
+.rank-line{display:flex;justify-content:space-between;color:#cbd5e1;font-size:13px}
+.rank-line b{color:#facc15}
+.level-bar,.combo-bar{height:9px;background:#334155;border-radius:20px;overflow:hidden;margin-top:8px}
+.level-bar div{height:100%;width:0;background:linear-gradient(90deg,#22c55e,#a3e635);transition:.2s}
+.xp-text{font-size:11px;color:#94a3b8;margin:5px 0 10px}
+.hero-game #coinButton{width:205px;height:205px;border-radius:50%;border:8px solid #eab308;background:radial-gradient(circle at 35% 30%,#fde68a,#facc15 55%,#ca8a04);font-size:88px;cursor:pointer;box-shadow:0 0 0 8px #facc1515,0 15px 45px #facc1533;transition:transform .08s,filter .15s}
+.hero-game #coinButton:active{transform:scale(.9) rotate(-3deg)}
+.hero-game #coinButton.crit{filter:brightness(1.35);box-shadow:0 0 45px #fff176}
+.click-power{margin:9px 0;color:#cbd5e1}
+.click-power b{color:#86efac}
+.combo-box{display:flex;justify-content:center;gap:18px;background:#1e293b;border-radius:14px;padding:9px;margin:10px 0 5px;font-size:13px}
+.combo-box b{color:#facc15}
+.combo-bar{margin-top:5px}
+.combo-bar div{height:100%;width:0;background:#fb923c;transition:width .1s}
+.boost{width:100%;margin-top:12px;padding:13px;border:0;border-radius:13px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;font-weight:bold;cursor:pointer}
+.boost:disabled{opacity:.55}
+.boost small{display:block;margin-top:3px}
+.offline{margin-top:10px;padding:10px;border-radius:12px;background:#14532d;border:1px solid #22c55e;color:#bbf7d0;font-size:12px}
+.hidden{display:none}
+nav{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:13px 0 18px}
+nav button{border:1px solid #334155;background:#1e293b;color:#cbd5e1;border-radius:12px;padding:9
